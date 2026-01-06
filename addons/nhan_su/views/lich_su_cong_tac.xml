@@ -9,10 +9,27 @@
                     <sheet>
                         <div class="oe_read_only" style="font-size:25px">Lịch sử công tác</div>
                         <group col="4" string="Thông tin chung">
-                            <field name="nhan_vien_id"/>
-                            <field name="chuc_vu_id"/>
-                            <field name="don_vi_id"/>
+                            <field name="nhan_vien_id" 
+                                   domain="[('trang_thai_lam_viec', 'in', ['dang_lam_viec', 'thu_viec'])]"
+                                   options="{'no_create': True}"/>
+                            <field name="chuc_vu_id" 
+                                   domain="[('trang_thai', '=', 'dang_su_dung')]"
+                                   options="{'no_create': True}"/>
+                            <field name="don_vi_id" options="{'no_create': True}"/>
+                            <field name="phong_ban_id" 
+                                   domain="[('trang_thai', '=', 'dang_hoat_dong')]"
+                                   options="{'no_create': True}"/>
                             <field name="loai_chuc_vu"/>
+                            <field name="trang_thai"/>
+                        </group>
+                        <group col="4" string="Thời gian">
+                            <field name="ngay_bat_dau"/>
+                            <field name="ngay_ket_thuc"/>
+                            <field name="so_thang_cong_tac" readonly="1"/>
+                            <field name="luong"/>
+                        </group>
+                        <group col="1" string="Ghi chú">
+                            <field name="ghi_chu" placeholder="Nhập ghi chú..."/>
                         </group>
                     </sheet>
                 </form>
@@ -23,11 +40,18 @@
             <field name="name">lich_su_cong_tac</field>
             <field name="model">lich_su_cong_tac</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-info="trang_thai == 'dang_lam'"
+                      decoration-muted="trang_thai == 'ket_thuc'">
                     <field name="nhan_vien_id"/>
                     <field name="chuc_vu_id"/>
                     <field name="don_vi_id"/>
+                    <field name="phong_ban_id"/>
                     <field name="loai_chuc_vu"/>
+                    <field name="ngay_bat_dau"/>
+                    <field name="ngay_ket_thuc"/>
+                    <field name="so_thang_cong_tac"/>
+                    <field name="trang_thai"/>
+                    <field name="luong"/>
                 </tree>
             </field>
         </record>
@@ -39,7 +63,24 @@
                     <field name="nhan_vien_id"/>
                     <field name="chuc_vu_id"/>
                     <field name="don_vi_id"/>
+                    <field name="phong_ban_id"/>
                     <field name="loai_chuc_vu"/>
+                    <field name="ngay_bat_dau"/>
+                    <field name="ngay_ket_thuc"/>
+                    <separator/>
+                    <filter string="Đang làm" 
+                            name="dang_lam" 
+                            domain="[('trang_thai', '=', 'dang_lam')]"/>
+                    <filter string="Kết thúc" 
+                            name="ket_thuc" 
+                            domain="[('trang_thai', '=', 'ket_thuc')]"/>
+                    <separator/>
+                    <filter string="Nhóm theo nhân viên" 
+                            name="group_by_nhan_vien" 
+                            context="{'group_by': 'nhan_vien_id'}"/>
+                    <filter string="Nhóm theo chức vụ" 
+                            name="group_by_chuc_vu" 
+                            context="{'group_by': 'chuc_vu_id'}"/>
                 </search>
             </field>
         </record>

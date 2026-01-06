@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from odoo import models, fields, api
 
 
@@ -8,3 +9,7 @@ class DonVi(models.Model):
 
     ma_don_vi = fields.Char("Mã đơn vị", required=True)
     ten_don_vi = fields.Char("Tên đơn vị", required=True)
+    
+    _sql_constraints = [
+        ('ma_don_vi_unique', 'unique(ma_don_vi)', 'Mã đơn vị phải là duy nhất')
+    ]

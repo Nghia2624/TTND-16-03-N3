@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_student_classroom_tree" model="ir.ui.view">
+        <field name="name">student.classroom.tree</field>
+        <field name="model">student.classroom</field>
+        <field name="arch" type="xml">
+            <tree string="Danh sách lớp học">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="faculty_id"/>
+                <field name="student_count"/>
+                <field name="capacity"/>
+                <field name="available_seats" widget="progressbar" options="{'max_field': 'capacity'}"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_student_classroom_form" model="ir.ui.view">
+        <field name="name">student.classroom.form</field>
+        <field name="model">student.classroom</field>
+        <field name="arch" type="xml">
+            <form string="Lớp học">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(student_management.action_student_student)d" type="action" class="oe_stat_button" icon="fa-users" context="{'search_default_classroom_id': active_id}">
+                            <field name="student_count" widget="statinfo" string="Sinh viên"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="faculty_id"/>
+                            <field name="capacity"/>
+                            <field name="student_count" readonly="1"/>
+                            <field name="available_seats" readonly="1" widget="progressbar" options="{'max_field': 'capacity'}"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Mô tả về lớp học..."/>
+                    </group>
+                    <notebook>
+                        <page string="Sinh viên">
+                            <field name="student_ids" nolabel="1">
+                                <tree>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="email"/>
+                                    <field name="phone"/>
+                                    <field name="gender"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_student_classroom_search" model="ir.ui.view">
+        <field name="name">student.classroom.search</field>
+        <field name="model">student.classroom</field>
+        <field name="arch" type="xml">
+            <search string="Tìm kiếm lớp học">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="faculty_id"/>
+                <filter string="Hoạt động" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Không hoạt động" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_student_classroom" model="ir.actions.act_window">
+        <field name="name">Lớp học</field>
+        <field name="res_model">student.classroom</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo lớp học mới
+            </p>
+            <p>
+                Quản lý thông tin các lớp học trong trường.
+            </p>
+        </field>
+    </record>
+</odoo>
+

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_student_student_tree" model="ir.ui.view">
+        <field name="name">student.student.tree</field>
+        <field name="model">student.student</field>
+        <field name="arch" type="xml">
+            <tree string="Danh sách sinh viên">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="classroom_id"/>
+                <field name="faculty_id"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_student_student_form" model="ir.ui.view">
+        <field name="name">student.student.form</field>
+        <field name="model">student.student</field>
+        <field name="arch" type="xml">
+            <form string="Sinh viên">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                    <group>
+                        <group>
+                            <field name="image" widget="image" class="oe_avatar"/>
+                        </group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="classroom_id"/>
+                            <field name="faculty_id" readonly="1"/>
+                            <field name="gender"/>
+                            <field name="birthday"/>
+                            <field name="age" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="email"/>
+                            <field name="phone"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="address" placeholder="Địa chỉ..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_student_student_search" model="ir.ui.view">
+        <field name="name">student.student.search</field>
+        <field name="model">student.student</field>
+        <field name="arch" type="xml">
+            <search string="Tìm kiếm sinh viên">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="email"/>
+                <field name="classroom_id"/>
+                <field name="faculty_id"/>
+                <filter string="Hoạt động" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Không hoạt động" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="Nam" name="male" domain="[('gender', '=', 'male')]"/>
+                <filter string="Nữ" name="female" domain="[('gender', '=', 'female')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_student_student" model="ir.actions.act_window">
+        <field name="name">Sinh viên</field>
+        <field name="res_model">student.student</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo sinh viên mới
+            </p>
+            <p>
+                Quản lý thông tin sinh viên trong trường.
+            </p>
+        </field>
+    </record>
+</odoo>
+

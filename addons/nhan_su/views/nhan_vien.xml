@@ -6,9 +6,23 @@
             <field name="model">nhan_vien</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <button name="%(nhan_su.action_cham_cong)d" 
+                                type="action" 
+                                string="Chấm công"
+                                class="oe_stat_button"
+                                icon="fa-clock-o"
+                                context="{'default_nhan_vien_id': id, 'search_default_nhan_vien_id': id}"/>
+                        <button name="%(nhan_su.action_lich_su_cong_tac)d" 
+                                type="action" 
+                                string="Lịch sử công tác"
+                                class="oe_stat_button"
+                                icon="fa-history"
+                                context="{'default_nhan_vien_id': id, 'search_default_nhan_vien_id': id}"/>
+                    </header>
                     <sheet>
                         <div class="oe_read_only" style="font-size:25px">Nhân viên</div>
-                        <group col="4" string="Thông tin chung">
+                        <group col="4" string="Thông tin cá nhân">
                             <field name="ho_ten_dem"/>
                             <field name="ten"/>
                             <field name="ho_va_ten"/>
@@ -18,14 +32,88 @@
                             <field name="so_nguoi_bang_tuoi"/>
                             <field name="que_quan"/>
                             <field name="email"/>
+                            <field name="so_dien_thoai"/>
+                            <field name="so_bhxh"/>
+                            <field name="dia_chi"/>
                             <field name="anh" widget="image"/>
+                        </group>
+                        <group col="4" string="Thông tin công việc">
+                            <field name="chuc_vu_id" 
+                                   domain="[('trang_thai', '=', 'dang_su_dung')]"
+                                   options="{'no_create': True}"/>
+                            <field name="don_vi_id" options="{'no_create': True}"/>
+                            <field name="phong_ban_ids" 
+                                   widget="many2many_tags"
+                                   domain="[('trang_thai', '=', 'dang_hoat_dong')]"
+                                   options="{'no_create': True}"/>
+                            <field name="ngay_vao_lam"/>
+                            <field name="so_nam_cong_tac" readonly="1"/>
+                            <field name="trang_thai_lam_viec"/>
+                            <field name="luong"/>
+                            <field name="lich_su_cong_tac_hien_tai_id" readonly="1" options="{'no_open': True}"/>
+                        </group>
+                        <group col="4" string="Thống kê chấm công">
+                            <field name="tong_so_ngay_cham_cong" readonly="1"/>
+                            <field name="tong_so_gio_lam_viec" readonly="1"/>
+                            <field name="so_ngay_nghi_phep" readonly="1"/>
+                            <field name="so_ngay_muon" readonly="1"/>
                         </group>
                         <notebook>
                             <page string="Danh sách lịch sử công tác">
-                                <field name="lich_su_cong_tac_ids"/>
+                                <field name="lich_su_cong_tac_ids" nolabel="1" context="{'default_nhan_vien_id': id}">
+                                    <tree decoration-info="trang_thai == 'dang_lam'"
+                                          decoration-muted="trang_thai == 'ket_thuc'"
+                                          default_order="ngay_bat_dau desc">
+                                        <field name="chuc_vu_id"/>
+                                        <field name="don_vi_id"/>
+                                        <field name="phong_ban_id"/>
+                                        <field name="loai_chuc_vu"/>
+                                        <field name="ngay_bat_dau"/>
+                                        <field name="ngay_ket_thuc"/>
+                                        <field name="so_thang_cong_tac"/>
+                                        <field name="trang_thai"/>
+                                        <field name="luong"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="Danh sách chứng chỉ bằng cấp">
-                                <field name="danh_sach_chung_chi_bang_cap_ids"/>
+                                <field name="danh_sach_chung_chi_bang_cap_ids" nolabel="1" context="{'default_nhan_vien_id': id}">
+                                    <tree>
+                                        <field name="chung_chi_bang_cap_id"/>
+                                        <field name="ma_dinh_danh" readonly="1"/>
+                                        <field name="tuoi" readonly="1"/>
+                                        <field name="ghi_chu"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Danh sách phòng ban">
+                                <field name="phong_ban_ids" nolabel="1" widget="many2many_tags">
+                                    <tree decoration-info="trang_thai == 'dang_hoat_dong'"
+                                          decoration-muted="trang_thai == 'ngung_hoat_dong'">
+                                        <field name="ma_dinh_danh"/>
+                                        <field name="ten_phong_ban"/>
+                                        <field name="truong_phong_id"/>
+                                        <field name="trang_thai"/>
+                                        <field name="so_luong_nhan_vien"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Lịch sử chấm công">
+                                <field name="cham_cong_ids" nolabel="1" context="{'default_nhan_vien_id': id}">
+                                    <tree decoration-info="trang_thai == 'da_duyet'"
+                                          decoration-muted="trang_thai == 'tu_choi'"
+                                          decoration-warning="trang_thai == 'chua_duyet'"
+                                          default_order="ngay_cham_cong desc">
+                                        <field name="ngay_cham_cong"/>
+                                        <field name="loai_cham_cong"/>
+                                        <field name="gio_vao"/>
+                                        <field name="gio_ra"/>
+                                        <field name="so_gio_lam_viec"/>
+                                        <field name="so_phut_muon"/>
+                                        <field name="so_phut_som"/>
+                                        <field name="trang_thai"/>
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>
@@ -38,16 +126,20 @@
             <field name="name">nhan_vien</field>
             <field name="model">nhan_vien</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-info="trang_thai_lam_viec == 'dang_lam_viec'"
+                      decoration-muted="trang_thai_lam_viec == 'nghi_viec'"
+                      decoration-warning="trang_thai_lam_viec == 'thu_viec'">
                     <field name="ma_dinh_danh"/>
-                    <field name="ho_ten_dem"/>
-                    <field name="ten"/>
                     <field name="ho_va_ten"/>
-                    <field name="ngay_sinh"/>
-                    <field name="tuoi"/>
-                    <field name="so_nguoi_bang_tuoi"/>
-                    <field name="que_quan"/>
+                    <field name="chuc_vu_id"/>
+                    <field name="don_vi_id"/>
+                    <field name="phong_ban_ids" widget="many2many_tags"/>
+                    <field name="ngay_vao_lam"/>
+                    <field name="so_nam_cong_tac" readonly="1"/>
+                    <field name="trang_thai_lam_viec"/>
                     <field name="email"/>
+                    <field name="so_dien_thoai"/>
+                    <field name="luong"/>
                 </tree>
             </field>
         </record>
@@ -58,10 +150,36 @@
                 <search>
                     <field name="ma_dinh_danh"/>
                     <field name="ho_va_ten"/>
+                    <field name="chuc_vu_id"/>
+                    <field name="don_vi_id"/>
+                    <field name="phong_ban_ids"/>
                     <field name="ngay_sinh"/>
                     <field name="tuoi"/>
                     <field name="que_quan"/>
                     <field name="email"/>
+                    <field name="so_bhxh"/>
+                    <field name="dia_chi"/>
+                    <field name="luong"/>
+                    <separator/>
+                    <filter string="Đang làm việc" 
+                            name="dang_lam_viec" 
+                            domain="[('trang_thai_lam_viec', '=', 'dang_lam_viec')]"/>
+                    <filter string="Nghỉ việc" 
+                            name="nghi_viec" 
+                            domain="[('trang_thai_lam_viec', '=', 'nghi_viec')]"/>
+                    <filter string="Thử việc" 
+                            name="thu_viec" 
+                            domain="[('trang_thai_lam_viec', '=', 'thu_viec')]"/>
+                    <separator/>
+                    <filter string="Nhóm theo chức vụ" 
+                            name="group_by_chuc_vu" 
+                            context="{'group_by': 'chuc_vu_id'}"/>
+                    <filter string="Nhóm theo đơn vị" 
+                            name="group_by_don_vi" 
+                            context="{'group_by': 'don_vi_id'}"/>
+                    <filter string="Nhóm theo trạng thái" 
+                            name="group_by_trang_thai" 
+                            context="{'group_by': 'trang_thai_lam_viec'}"/>
                 </search>
             </field>
         </record>

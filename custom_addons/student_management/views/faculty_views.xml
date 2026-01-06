@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_student_faculty_tree" model="ir.ui.view">
+        <field name="name">student.faculty.tree</field>
+        <field name="model">student.faculty</field>
+        <field name="arch" type="xml">
+            <tree string="Danh sách khoa">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="classroom_count"/>
+                <field name="student_count"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_student_faculty_form" model="ir.ui.view">
+        <field name="name">student.faculty.form</field>
+        <field name="model">student.faculty</field>
+        <field name="arch" type="xml">
+            <form string="Khoa">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(student_management.action_student_classroom)d" type="action" class="oe_stat_button" icon="fa-building" context="{'search_default_faculty_id': active_id}">
+                            <field name="classroom_count" widget="statinfo" string="Lớp học"/>
+                        </button>
+                        <button name="%(student_management.action_student_student)d" type="action" class="oe_stat_button" icon="fa-users" context="{'search_default_faculty_id': active_id}">
+                            <field name="student_count" widget="statinfo" string="Sinh viên"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Mô tả về khoa..."/>
+                    </group>
+                    <notebook>
+                        <page string="Lớp học">
+                            <field name="classroom_ids" nolabel="1">
+                                <tree>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="student_count"/>
+                                    <field name="capacity"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_student_faculty_search" model="ir.ui.view">
+        <field name="name">student.faculty.search</field>
+        <field name="model">student.faculty</field>
+        <field name="arch" type="xml">
+            <search string="Tìm kiếm khoa">
+                <field name="name"/>
+                <field name="code"/>
+                <filter string="Hoạt động" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Không hoạt động" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_student_faculty" model="ir.actions.act_window">
+        <field name="name">Khoa</field>
+        <field name="res_model">student.faculty</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo khoa mới
+            </p>
+            <p>
+                Quản lý thông tin các khoa trong trường.
+            </p>
+        </field>
+    </record>
+</odoo>
+

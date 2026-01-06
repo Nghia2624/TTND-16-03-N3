@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form View -->
+        <record id="view_cham_cong_form" model="ir.ui.view">
+            <field name="name">cham_cong.form</field>
+            <field name="model">cham_cong</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_read_only" style="font-size:25px">Chấm Công</div>
+                        <group col="4" string="Thông tin chấm công">
+                            <field name="nhan_vien_id" 
+                                   domain="[('trang_thai_lam_viec', 'in', ['dang_lam_viec', 'thu_viec'])]"
+                                   options="{'no_create': True}"/>
+                            <field name="ngay_cham_cong"/>
+                            <field name="loai_cham_cong"/>
+                            <field name="trang_thai"/>
+                        </group>
+                        <group col="4" string="Thời gian làm việc" attrs="{'invisible': [('loai_cham_cong', '!=', 'diem_danh')]}">
+                            <field name="gio_vao" attrs="{'required': [('loai_cham_cong', '=', 'diem_danh')]}"/>
+                            <field name="gio_ra"/>
+                            <field name="so_gio_lam_viec" readonly="1"/>
+                            <field name="so_phut_muon" readonly="1"/>
+                            <field name="so_phut_som" readonly="1"/>
+                        </group>
+                        <group col="4" string="Cấu hình giờ chuẩn" attrs="{'invisible': [('loai_cham_cong', '!=', 'diem_danh')]}">
+                            <field name="gio_lam_viec_chuan"/>
+                            <field name="gio_vao_chuan"/>
+                            <field name="gio_ra_chuan"/>
+                        </group>
+                        <group col="2" string="Duyệt" attrs="{'readonly': [('trang_thai', '=', 'da_duyet')]}">
+                            <field name="nguoi_duyet_id" readonly="1"/>
+                            <field name="ngay_duyet" readonly="1"/>
+                        </group>
+                        <group col="1" string="Ghi chú">
+                            <field name="ghi_chu" placeholder="Nhập ghi chú..."/>
+                        </group>
+                    </sheet>
+                    <header>
+                        <button name="action_duyet" 
+                                string="Duyệt" 
+                                type="object" 
+                                class="oe_highlight"
+                                attrs="{'invisible': [('trang_thai', '!=', 'chua_duyet')], 'readonly': [('trang_thai', '!=', 'chua_duyet')]}"/>
+                        <button name="action_tu_choi" 
+                                string="Từ chối" 
+                                type="object"
+                                attrs="{'invisible': [('trang_thai', '!=', 'chua_duyet')], 'readonly': [('trang_thai', '!=', 'chua_duyet')]}"/>
+                    </header>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="view_cham_cong_tree" model="ir.ui.view">
+            <field name="name">cham_cong.tree</field>
+            <field name="model">cham_cong</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="trang_thai == 'da_duyet'"
+                      decoration-muted="trang_thai == 'tu_choi'"
+                      decoration-warning="trang_thai == 'chua_duyet'">
+                    <field name="nhan_vien_id"/>
+                    <field name="ngay_cham_cong"/>
+                    <field name="loai_cham_cong"/>
+                    <field name="gio_vao"/>
+                    <field name="gio_ra"/>
+                    <field name="so_gio_lam_viec"/>
+                    <field name="so_phut_muon"/>
+                    <field name="so_phut_som"/>
+                    <field name="trang_thai"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record model="ir.ui.view" id="cham_cong_search">
+            <field name="model">cham_cong</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="nhan_vien_id"/>
+                    <field name="ngay_cham_cong"/>
+                    <field name="loai_cham_cong"/>
+                    <separator/>
+                    <filter string="Chưa duyệt" 
+                            name="chua_duyet" 
+                            domain="[('trang_thai', '=', 'chua_duyet')]"/>
+                    <filter string="Đã duyệt" 
+                            name="da_duyet" 
+                            domain="[('trang_thai', '=', 'da_duyet')]"/>
+                    <filter string="Từ chối" 
+                            name="tu_choi" 
+                            domain="[('trang_thai', '=', 'tu_choi')]"/>
+                    <separator/>
+                    <filter string="Điểm danh" 
+                            name="diem_danh" 
+                            domain="[('loai_cham_cong', '=', 'diem_danh')]"/>
+                    <filter string="Nghỉ phép" 
+                            name="nghi_phep" 
+                            domain="[('loai_cham_cong', '=', 'nghi_phep')]"/>
+                    <separator/>
+                    <filter string="Hôm nay" 
+                            name="hom_nay" 
+                            domain="[('ngay_cham_cong', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter string="Tháng này" 
+                            name="thang_nay" 
+                            domain="[('ngay_cham_cong', '>=', context_today().strftime('%Y-%m-01'))]"/>
+                    <separator/>
+                    <filter string="Nhóm theo nhân viên" 
+                            name="group_by_nhan_vien" 
+                            context="{'group_by': 'nhan_vien_id'}"/>
+                    <filter string="Nhóm theo ngày" 
+                            name="group_by_ngay" 
+                            context="{'group_by': 'ngay_cham_cong'}"/>
+                    <filter string="Nhóm theo loại" 
+                            name="group_by_loai" 
+                            context="{'group_by': 'loai_cham_cong'}"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_cham_cong" model="ir.actions.act_window">
+            <field name="name">Chấm Công</field>
+            <field name="res_model">cham_cong</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="cham_cong_search"/>
+            <field name="context">{}</field>
+        </record>
+    </data>
+</odoo>
+

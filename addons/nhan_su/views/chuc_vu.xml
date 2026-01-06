@@ -11,7 +11,31 @@
                         <group col="4" string="Thông tin chung">
                             <field name="ma_chuc_vu"/>
                             <field name="ten_chuc_vu"/>
+                            <field name="cap_do"/>
+                            <field name="trang_thai"/>
+                            <field name="so_luong_nhan_vien" readonly="1"/>
                         </group>
+                        <group col="2" string="Mức lương">
+                            <field name="muc_luong_toi_thieu"/>
+                            <field name="muc_luong_toi_da"/>
+                        </group>
+                        <group col="1" string="Mô tả">
+                            <field name="mo_ta" placeholder="Nhập mô tả về chức vụ..."/>
+                        </group>
+                        <notebook>
+                            <page string="Danh sách nhân viên">
+                                <field name="nhan_vien_ids" nolabel="1">
+                                    <tree>
+                                        <field name="ma_dinh_danh"/>
+                                        <field name="ho_va_ten"/>
+                                        <field name="don_vi_id"/>
+                                        <field name="ngay_vao_lam"/>
+                                        <field name="trang_thai_lam_viec"/>
+                                        <field name="luong"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>
@@ -21,9 +45,15 @@
             <field name="name">chuc_vu</field>
             <field name="model">chuc_vu</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-info="trang_thai == 'dang_su_dung'"
+                      decoration-muted="trang_thai == 'ngung_su_dung'">
                     <field name="ma_chuc_vu"/>
                     <field name="ten_chuc_vu"/>
+                    <field name="cap_do"/>
+                    <field name="muc_luong_toi_thieu"/>
+                    <field name="muc_luong_toi_da"/>
+                    <field name="so_luong_nhan_vien"/>
+                    <field name="trang_thai"/>
                 </tree>
             </field>
         </record>
@@ -34,6 +64,18 @@
                 <search>
                     <field name="ma_chuc_vu"/>
                     <field name="ten_chuc_vu"/>
+                    <field name="cap_do"/>
+                    <separator/>
+                    <filter string="Đang sử dụng" 
+                            name="dang_su_dung" 
+                            domain="[('trang_thai', '=', 'dang_su_dung')]"/>
+                    <filter string="Ngừng sử dụng" 
+                            name="ngung_su_dung" 
+                            domain="[('trang_thai', '=', 'ngung_su_dung')]"/>
+                    <separator/>
+                    <filter string="Nhóm theo cấp độ" 
+                            name="group_by_cap_do" 
+                            context="{'group_by': 'cap_do'}"/>
                 </search>
             </field>
         </record>
